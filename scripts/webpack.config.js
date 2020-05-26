@@ -1,5 +1,3 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
 module.exports = {
     module: {
         rules: [{
@@ -14,12 +12,7 @@ module.exports = {
         }, {
             test: /\.less$/i,
             use: [
-                {
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {
-                        hmr: true,
-                    },
-                },
+                'style-loader',
                 'css-loader',
                 'less-loader'
             ],
@@ -34,11 +27,5 @@ module.exports = {
                 },
             ],
         }]
-    },
-    plugins: [
-        new MiniCssExtractPlugin({
-            filename: '[name].css',
-            chunkFilename: '[id].css'
-        })
-    ]
+    }
 };
