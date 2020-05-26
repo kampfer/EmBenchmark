@@ -1,6 +1,12 @@
 import { Suite, platform } from 'Benchmark';
+import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
+import 'highlight.js/styles/github.css';
 
 import './index.less';
+
+// hljs.configure({useBR: true});
+hljs.registerLanguage('javascript', javascript);
 
 export default class EmBenchmark {
 
@@ -19,18 +25,30 @@ export default class EmBenchmark {
 
     }
 
+    _fixIndent(source, length) {
+        let reg = new RegExp(`\\s{${length}}`)
+        return source.split('\n').map(code => code.replace(reg, '')).join('\n');
+    }
+
     _render() {
 
         let platformStr = platform.toString(),
             suite = this._suite,
             root = this._root,
-            benchmarks = suite.map(benchmark => `
-                <tr>
-                    <td title="Click to run this test again.">${benchmark.name}</td>
-                    <td>${benchmark.fn.toString()}</td>
-                    <td>Ready</td>
-                </tr>
-            `);
+            benchmarks = suite.map(benchmark => {
+
+                let m = benchmark.fn.toString().match(/\n(\s*)/g),
+                    trimLen = m[m.length - 1].length - 1;
+
+                return `
+                    <tr>
+                        <td title="Click to run this test again.">${benchmark.name}</td>
+                        <td><pre><code class="js">${/*hljs.fixMarkup(benchmark.fn.toString())*/this._fixIndent(benchmark.fn.toString(), trimLen)}</code></pre></td>
+                        <td>Ready</td>
+                    </tr>
+                `;
+
+            });
 
         root.innerHTML = `
             <div class="embedded-benchmark">
@@ -52,6 +70,10 @@ export default class EmBenchmark {
                 </table>
             </div>
         `;
+
+        root.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
 
     }
 

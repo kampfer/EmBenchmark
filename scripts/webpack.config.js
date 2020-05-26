@@ -10,7 +10,7 @@ module.exports = {
                 cacheDirectory: true
             }
         }, {
-            test: /\.less$/i,
+            test: /\.(less|css)$/i,
             use: [
                 'style-loader',
                 'css-loader',
