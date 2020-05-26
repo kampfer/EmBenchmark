@@ -1,0 +1,34 @@
+{
+  "name": "embenchmark",
+  "version": "1.0.0",
+  "description": "Embedded Benchmark",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --config scripts/webpack.dev.config.js",
+    "build": "webpack --config scripts/webpack.pro.config.js"
+  },
+  "keywords": [
+    "benchmark"
+  ],
+  "author": "kampfer.liao@foxmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "eslint": "^6.7.2",
+    "html-webpack-plugin": "^3.2.0",
+    "less": "^3.10.3",
+    "less-loader": "^5.0.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "url-loader": "^2.1.0",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "dependencies": {
+    "benchmark": "^2.1.4"
+  }
+}
