@@ -1,28 +1,83 @@
-import { Suite, platform } from 'Benchmark';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
-import 'highlight.js/styles/github.css';
 
+import 'highlight.js/styles/github.css';
 import './index.less';
 
-// hljs.configure({useBR: true});
 hljs.registerLanguage('javascript', javascript);
+
+let index = 0;
+
+const { Suite, platform } = window.Benchmark;
 
 export default class EmBenchmark {
 
     constructor({
         root = document.body,
         benchmarks = [],
+        name = 'benchmark' + index++,
     } = {}) {
-
-        this._suite = new Suite();
 
         this._root = root;
 
-        benchmarks.forEach(benchmark => this._suite.add(benchmark.name, benchmark.fn));
+        this._handleClick = this._handleClick.bind(this);
+        this._handleSuiteStart = this._handleSuiteStart.bind(this);
+        this._handleSuiteCycle = this._handleSuiteCycle.bind(this);
+        this._handleSuiteComplete = this._handleSuiteComplete.bind(this);
+        this._handleBenchmarkStart = this._handleBenchmarkStart.bind(this);
+        this._handleBenchmarkCycle = this._handleBenchmarkCycle.bind(this);
+        this._handleBenchmarkComplete = this._handleBenchmarkComplete.bind(this);
+
+        this._suite = new Suite(name, {
+            onCycle: this._handleSuiteCycle,
+            onComplete: this._handleSuiteComplete,
+            onStart: this._handleSuiteStart,
+        });
+
+        benchmarks.forEach(benchmark => 
+            this._suite.add(benchmark.name, benchmark.fn, {
+                onStart: this._handleBenchmarkStart,
+                onCycle: this._handleBenchmarkCycle,
+                onComplete: this._handleBenchmarkComplete
+            })
+        );
+
+        this._root.addEventListener('click', this._handleClick, false);
 
         this._render();
 
+    }
+
+    _handleSuiteStart() {
+        console.log('suite start');
+    }
+
+    _handleSuiteCycle(event) {
+        console.log('suite cycle', String(event.target));
+    }
+
+    _handleSuiteComplete() {
+        console.log('suite complete');
+    }
+
+    _handleBenchmarkStart() {
+        console.log('benchmark start');
+    }
+
+    _handleBenchmarkCycle(event) {
+        console.log('benchmark cycle', String(event.target));
+    }
+
+    _handleBenchmarkComplete() {
+        console.log('benchmark complete');
+    }
+
+    _handleClick(e) {
+        switch(e.target.dataset.role) {
+            case 'run-button':
+                this.run({ 'async': true });
+                break;
+        }
     }
 
     _fixIndent(source, length) {
@@ -43,7 +98,9 @@ export default class EmBenchmark {
                 return `
                     <tr>
                         <td title="Click to run this test again.">${benchmark.name}</td>
-                        <td><pre><code class="js">${/*hljs.fixMarkup(benchmark.fn.toString())*/this._fixIndent(benchmark.fn.toString(), trimLen)}</code></pre></td>
+                        <td>
+                            <pre><code class="js">${this._fixIndent(benchmark.fn.toString(), trimLen)}</code></pre>
+                        </td>
                         <td>Ready</td>
                     </tr>
                 `;
@@ -54,7 +111,7 @@ export default class EmBenchmark {
             <div class="embedded-benchmark">
                 <div class="header">
                     <div class="status">Ready to run.</div>
-                    <div class="controls"><button>Run tests</button></div>
+                    <div class="controls"><button data-role="run-button">Run tests</button></div>
                 </div>
                 <table>
                     <caption>Testing in ${platformStr}</caption>
@@ -86,9 +143,13 @@ export default class EmBenchmark {
         return this;
     }
 
-    run() {
-        console.log(this);
+    run(...args) {
+        this._suite.run(...args);
         return this;
+    }
+
+    destroy() {
+        this._root.removeEventListener('click', this._handleClick);
     }
 
 }

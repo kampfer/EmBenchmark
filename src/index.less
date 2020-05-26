@@ -5,6 +5,8 @@
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     overflow: hidden;
+    padding: 0.5em;
+    min-width: 500px;
 
     .header {
 
@@ -84,17 +86,23 @@
             vertical-align: middle;
         }
 
-        td:nth-child(1) {
+        td:first-child {
 
             font-weight: bold;
             background: #dde4ea;
             min-width: 100px;
             text-align: center;
 
+            &:hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+
         }
 
-        td:nth-child(3) {
+        td:last-child {
             text-align: center;
+            border-right: none;
         }
 
         code {
