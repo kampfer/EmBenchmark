@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
     module: {
         rules: [{
@@ -27,5 +29,12 @@ module.exports = {
                 },
             ],
         }]
+    },
+    entry: path.join(__dirname, '../src/index.js'),
+    output: {
+        filename: 'EmBenchmark.js',
+        path: path.join(__dirname, '../build'),
+        library: 'EmBenchmark',
+        libraryTarget: 'umd'
     }
 };
