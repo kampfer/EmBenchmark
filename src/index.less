@@ -45,6 +45,10 @@
 
                 }
 
+                &.stop-btn {
+                    display: none;
+                }
+
             }
 
         }
@@ -103,6 +107,23 @@
         td:last-child {
             text-align: center;
             border-right: none;
+            width: 100px;
+            line-height: 1.5em;
+
+            &.fastest {
+                background: #9cee82;
+            }
+
+            &.slowest {
+                background: pink;
+            }
+
+            small {
+                font-size: 0.8em;
+                line-height: 1.5em;
+                display: block;
+            }
+
         }
 
         code {
