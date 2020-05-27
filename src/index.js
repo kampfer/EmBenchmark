@@ -74,17 +74,7 @@ export default class EmBenchmark {
         this._statusWrapper.innerHTML = 'Done. Ready to run again.';
         this._showRunBtn();
 
-        let fastestBenchmark = null,
-            slowestBenchmark = null;
-
-        suite.forEach(benchmark => {
-
-            if (!fastestBenchmark || benchmark.hz > fastestBenchmark.hz) fastestBenchmark = benchmark;
-            if (!slowestBenchmark || benchmark.hz < slowestBenchmark.hz) slowestBenchmark = benchmark;
-
-        });
-
-        suite.forEach(benchmark => this._renderResult(benchmark, fastestBenchmark, slowestBenchmark));
+        this._renderAllResults();
 
     }
 
@@ -99,8 +89,16 @@ export default class EmBenchmark {
         this._showRunBtn();
     }
 
-    _handleBenchmarkStart() {
+    _handleBenchmarkStart(event) {
+
+        let benchmark = event.target,
+            td = this._root.querySelector(`#benchmark-${benchmark.id}>td:last-child`);
+
+        td.className = '';
+        td.innerHTML = 'pending…';
+
         this._showStopBtn();
+
     }
 
     _handleBenchmarkCycle(event) {
@@ -115,24 +113,27 @@ export default class EmBenchmark {
 
     _handleBenchmarkComplete(event) {
 
-        let benchmark = event.target,
+        let suite = this._suite,
+            benchmark = event.target,
             benchmarkTd = this._root.querySelector(`#benchmark-${benchmark.id}>td:last-child`);
 
         if (benchmark.aborted) return;
 
-        if (this._suite.running) {
+        if (suite.running) {
             benchmarkTd.innerHTML = 'completed';
         } else {
-            this._renderResult(benchmark);
+            this._statusWrapper.innerHTML = 'Done. Ready to run again.';
+            this._showRunBtn();
+            this._renderAllResults();
         }
 
-        this._showRunBtn();
     }
 
     _handleBenchmarkAbort(event) {
         let benchmark = event.target,
             td = this._root.querySelector(`#benchmark-${benchmark.id}>td:last-child`);
 
+        td.className = '';
         td.innerHTML = 'Ready';
 
         this._statusWrapper.innerHTML = 'Ready to run again.';
@@ -233,6 +234,24 @@ export default class EmBenchmark {
         }
 
         benchmarkTd.innerHTML = innerHTML;
+
+    }
+
+    _renderAllResults() {
+
+        let suite = this._suite,
+            fastestBenchmark = null,
+            slowestBenchmark = null;
+
+        suite.forEach(benchmark => {
+
+            if (!fastestBenchmark || benchmark.hz > fastestBenchmark.hz) fastestBenchmark = benchmark;
+            if (!slowestBenchmark || benchmark.hz < slowestBenchmark.hz) slowestBenchmark = benchmark;
+
+        });
+
+        // 如果没有hz值，表示benchmark还未执行，不修改结果，保持pendding状态
+        suite.forEach(benchmark => Object.prototype.hasOwnProperty.call(benchmark, "hz") && this._renderResult(benchmark, fastestBenchmark, slowestBenchmark));
 
     }
 
