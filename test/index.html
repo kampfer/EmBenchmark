@@ -11,37 +11,40 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/benchmark/2.1.4/benchmark.min.js"></script>
     <script src="../EmBenchmark.js"></script>
     <script>
-        var suite = new EmBenchmark.default({
+        function someFn(ix) {
+            return ix * 5 + 1 / 3 * 8;
+        }
+
+        let arr = [];
+        for (let i = 0; i < 1000; i++) {
+            arr[i] = i;
+        }
+
+        new EmBenchmark.default({
             root: document.getElementById('root'),
             benchmarks: [{
-                name: 'RegExp#test',
+                name: 'For loop, basic',
                 fn: function () {
-                    /o/.test('Hello World!');
+                    for (var i = 0; i < arr.length; i++) {
+                        someFn(arr[i]);
+                    }
                 }
             }, {
-                name: 'String#indexOf',
+                name: 'For loop, cached',
                 fn: function () {
-                    'Hello World!'.indexOf('o') > -1;
+                    for (var i = 0, len = arr.length; i < len; i++) {
+                        someFn(arr[i]);
+                    }
+                }
+            }, {
+                name: 'ForEach loop',
+                fn: function () {
+                    arr.forEach(function (item) {
+                        someFn(item);
+                    })
                 }
             }]
         });
-
-        // // add tests
-        // suite.add('RegExp#test', function () {
-        //     /o/.test('Hello World!');
-        // })
-        // .add('String#indexOf', function () {
-        //     'Hello World!'.indexOf('o') > -1;
-        // })
-        // // add listeners
-        // .on('cycle', function (event) {
-        //     console.log(String(event.target));
-        // })
-        // .on('complete', function () {
-        //     console.log('Fastest is ' + this.filter('fastest').map('name'));
-        // })
-        // // run async
-        // .run({ 'async': true });
     </script>
 </body>
 
