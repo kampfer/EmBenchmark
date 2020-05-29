@@ -2,11 +2,11 @@ import EmBenchmark from './EmBenchmark';
 
 export { EmBenchmark };
 
-export function createEmBenchmark(name, root) {
+export function createEmBenchmark(name, root = document.body) {
 
     let setup,
         benchmarks = [],
-        scripts = document.body.getElementsByTagName('script');
+        scripts = root.getElementsByTagName('script');
 
     for(let script of scripts) {
 
