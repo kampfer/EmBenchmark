@@ -162,9 +162,13 @@ export default class EmBenchmark {
 
     _render() {
 
+        // 每个embenchmark只能render一次
+        if (this._domElem) return;
+
         let platformStr = platform.toString(),
             suite = this._suite,
             root = this._root,
+            domElem = document.createElement('div'),
             benchmarks = suite.map(benchmark => {
 
                 let m = benchmark.fn.toString().match(/\n(\s*)/g),
@@ -182,38 +186,42 @@ export default class EmBenchmark {
 
             });
 
-        root.innerHTML = `
-            <div class="embedded-benchmark">
-                <div class="header">
-                    <div class="status">Ready to run.</div>
-                    <div class="controls">
-                        <button data-role="run-button" class="run-btn">Run tests</button>
-                        <button data-role="stop-button" class="stop-btn">Stop running</button>
-                    </div>
+        domElem.className = 'embedded-benchmark';
+
+        domElem.innerHTML = `
+            <div class="header">
+                <div class="status">Ready to run.</div>
+                <div class="controls">
+                    <button data-role="run-button" class="run-btn">Run tests</button>
+                    <button data-role="stop-button" class="stop-btn">Stop running</button>
                 </div>
-                <table>
-                    <caption>Testing in ${platformStr}</caption>
-                    <thead>
-                        <tr>
-                            <th colspan="2">Test</th>
-                            <th title="Operations per second (higher is better)">Ops/sec</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${ benchmarks.join('') }
-                    </tbody>
-                </table>
             </div>
+            <table>
+                <caption>Testing in ${platformStr}</caption>
+                <thead>
+                    <tr>
+                        <th colspan="2">Test</th>
+                        <th title="Operations per second (higher is better)">Ops/sec</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${ benchmarks.join('') }
+                </tbody>
+            </table>
         `;
 
-        root.querySelectorAll('pre code').forEach((block) => {
+        domElem.querySelectorAll('pre code').forEach((block) => {
             hljs.highlightBlock(block);
         });
 
-        this._runBtn = root.querySelector('[data-role="run-button"]');
-        this._stopBtn = root.querySelector('[data-role="stop-button"]');
-        this._statusWrapper = root.querySelector('.status');
-        this._benchmarkList = root.querySelectorAll('table>tbody>tr');
+        this._runBtn = domElem.querySelector('[data-role="run-button"]');
+        this._stopBtn = domElem.querySelector('[data-role="stop-button"]');
+        this._statusWrapper = domElem.querySelector('.status');
+        this._benchmarkList = domElem.querySelectorAll('table>tbody>tr');
+
+        this._domElem = domElem;
+
+        root.appendChild(domElem);
 
     }
 
@@ -295,6 +303,7 @@ export default class EmBenchmark {
 
     destroy() {
         this._root.removeEventListener('click', this._handleClick);
+        this._root.removeChild(this._domElem);
     }
 
 }
