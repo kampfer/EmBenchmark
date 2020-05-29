@@ -178,7 +178,7 @@ export default class EmBenchmark {
                     <tr id="benchmark-${benchmark.id}">
                         <td width="200" title="Click to run this test again." data-role="benchmark-trigger" data-id="${benchmark.id}">${benchmark.name}</td>
                         <td>
-                            <pre><code class="js">${this._fixIndent(benchmark.fn.toString(), trimLen)}</code></pre>
+                            <pre><code>${this._fixIndent(benchmark.fn.toString(), trimLen)}</code></pre>
                         </td>
                         <td>Ready</td>
                     </tr>
@@ -260,7 +260,10 @@ export default class EmBenchmark {
         });
 
         // 如果没有hz值，表示benchmark还未执行，不修改结果，保持pendding状态
-        suite.forEach(benchmark => Object.prototype.hasOwnProperty.call(benchmark, "hz") && this._renderResult(benchmark, fastestBenchmark, slowestBenchmark));
+        suite.forEach(benchmark => {
+            if (Object.prototype.hasOwnProperty.call(benchmark, "hz"))
+                this._renderResult(benchmark, fastestBenchmark, slowestBenchmark)
+        });
 
     }
 
@@ -296,7 +299,9 @@ export default class EmBenchmark {
         if (suite.running) {
             suite.abort();
         } else {
-            suite.forEach(benchmark => benchmark.running && benchmark.abort());
+            suite.forEach(benchmark => {
+                if (benchmark.running) benchmark.abort()
+            });
         }
         return this;
     }
