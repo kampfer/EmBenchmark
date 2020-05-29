@@ -43,6 +43,7 @@ export default class EmBenchmark {
                 onCycle: this._handleBenchmarkCycle,
                 onComplete: this._handleBenchmarkComplete,
                 onAbort: this._handleBenchmarkAbort,
+                setup: benchmark.setup
             })
         );
 
@@ -171,7 +172,7 @@ export default class EmBenchmark {
 
                 return `
                     <tr id="benchmark-${benchmark.id}">
-                        <td title="Click to run this test again." data-role="benchmark-trigger" data-id="${benchmark.id}">${benchmark.name}</td>
+                        <td width="200" title="Click to run this test again." data-role="benchmark-trigger" data-id="${benchmark.id}">${benchmark.name}</td>
                         <td>
                             <pre><code class="js">${this._fixIndent(benchmark.fn.toString(), trimLen)}</code></pre>
                         </td>
