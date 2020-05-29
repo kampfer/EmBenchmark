@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/benchmark/2.1.4/benchmark.min.js"></script>
     <script src="../EmBenchmark.js"></script>
 
-    <script type="text/setup" id="setup">
+    <script type="text/code" data-setup>
         function someFn(ix) {
             return ix * 5 + 1 / 3 * 8;
         }
@@ -23,38 +23,28 @@
         }
     </script>
 
-    <script>
-        let setup = document.getElementById('setup').innerText;
+    <script type="text/code" data-test="For loop, basic">
+        for (var i = 0; i < arr.length; i++) {
+            someFn(arr[i]);
+        }
+    </script>
 
-        new EmBenchmark.default({
-            root: document.getElementById('root'),
-            benchmarks: [{
-                name: 'For loop, basic',
-                fn: function() {
-                    for (var i = 0; i < arr.length; i++) {
-                        someFn(arr[i]);
-                    }
-                },
-                // setup必须作为参数传入，不能在全局执行，否则结果会异常：forEach反而最快
-                setup
-            }, {
-                name: 'For loop, cached',
-                fn: function() {
-                    for (var i = 0, len = arr.length; i < len; i++) {
-                        someFn(arr[i]);
-                    }
-                },
-                setup
-            }, {
-                name: 'ForEach loop',
-                fn: function() {
-                    arr.forEach(function (item) {
-                        someFn(item);
-                    });
-                },
-                setup
-            }]
+    <script type="text/code" data-test="For loop, cached">
+        for (var i = 0, len = arr.length; i < len; i++) {
+            someFn(arr[i]);
+        }
+    </script>
+
+    <script type="text/code" data-test="ForEach loop">
+        arr.forEach(function (item) {
+            someFn(item);
         });
+    </script>
+
+    <script>
+
+        EmBenchmark.createEmBenchmark('loop', document.getElementById('root'));
+
     </script>
 </body>
 
