@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "benchmark": "^2.1.4",
-    "highlight.js": "^10.0.3",
+    "highlight.js": "^10.1.2",
     "reset-css": "^5.0.1"
   }
 }
